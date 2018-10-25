@@ -1,4 +1,4 @@
-import { ADD_PLACE } from '../actions/types';
+import { ADD_PLACE } from '../actions/type';
 
 const initialState = {
     placeName: '',

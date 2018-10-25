@@ -5,11 +5,14 @@
  * @format
  * @flow
  */
+import ListItem from './src/component/Item/ListItem';
+import { connect } from 'react-redux';
+import { addPlace } from './src/redux/actions/place';
 
 import React, { Component } from 'react';
-import { StyleSheet, View, TextInput, Button } from 'react-native';
+import { StyleSheet, View, TextInput, Button, FlatList } from 'react-native';
 
-export default class App extends Component {
+class App extends Component {
 
   state = {
     placeName: '',
@@ -17,7 +20,30 @@ export default class App extends Component {
   }
 
   placeSubmitHandler = () => {
-    console.log("Submitted");
+    if (this.state.placeName.trim() === '') {
+      return;
+    }
+    this.props.add(this.state.placeName);
+  }
+
+  placeNameChangeHandler = (value) => {
+    this.setState({
+      placeName: value
+    });
+  }
+
+  placesOutput = () => {
+    return (
+      <FlatList style={styles.listContainer}
+        data={this.props.places}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={info => (
+          <ListItem
+            placeName={info.item.value}
+          />
+        )}
+      />
+    )
   }
 
   render() {
@@ -27,11 +53,17 @@ export default class App extends Component {
           <TextInput
             placeholder="Seach Places"
             style={styles.placeInput}
-          ></TextInput>
+            value={this.state.placeName}
+            onChangeText={this.placeNameChangeHandler}
+          >
+          </TextInput>
           <Button title='Add'
             style={styles.placeButton}
-            onPress={this.placeSubmitHandler}
+            onPress={() => this.placeSubmitHandler()}
           />
+        </View>
+        <View style={styles.listContainer}>
+          {this.placesOutput()}
         </View>
       </View>
     );
@@ -60,3 +92,19 @@ const styles = StyleSheet.create({
     width: '100%'
   }
 });
+
+const mapStateToProps = state => {
+  return {
+    places: state.places.places
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    add: (name) => {
+      dispatch(addPlace(name))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)

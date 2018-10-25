@@ -1,4 +1,4 @@
-import { ADD_PLACE } from './types';
+import { ADD_PLACE } from './type';
 
 export const addPlace = placeName => {
     return {
